@@ -1,0 +1,102 @@
+<Form>:
+    popup_label: popup_label
+    score_label: score_label
+    speed_label: speed_label
+
+    canvas:
+        Rectangle:
+            source: 'background.jpg'
+            size: self.size
+            pos: (0, 0)
+
+        Color:
+            rgba: (0, 0, 0, 0.3)
+        Rectangle:
+            size: self.size
+            pos: (0, 0)
+        
+        # Рисуем стены (красная рамка)
+        Color:
+            rgba: (1, 0, 0, 1)
+        Line:
+            rectangle: (25, 25, self.width - 50, self.height - 50)
+            width: 3
+
+    Label:
+        id: score_label
+        text: "🍎 x " + str(self.parent.worm_len)
+        width: self.width
+        color: (1, 1, 1, 1)
+        font_size: 30
+        bold: True
+        outline_color: (0, 0, 0, 1)
+        outline_width: 2
+        pos: (20, self.parent.height - 60)
+
+    Label:
+        id: speed_label
+        text: "⚡ x " + str(round(1.0 / self.parent.current_speed, 1))
+        width: self.width
+        color: (1, 1, 0, 1)
+        font_size: 24
+        bold: True
+        outline_color: (0, 0, 0, 1)
+        outline_width: 2
+        pos: (self.parent.width - 150, self.parent.height - 60)
+
+    Label:
+        id: popup_label
+        width: self.width
+        color: (1, 1, 1, 1)
+        font_size: 40
+        bold: True
+        outline_color: (0, 0, 0, 1)
+        outline_width: 2
+        center: self.parent.center
+
+<Worm>:
+
+<Cell>:
+    canvas:
+        Color:
+            rgba: self.color
+        Rectangle:
+            size: self.graphical_size
+            pos: self.graphical_pos
+
+<Head>:
+    canvas:
+        Color:
+            rgba: self.color
+        Rectangle:
+            size: self.graphical_size
+            pos: self.graphical_pos
+        
+        Color:
+            rgba: (1, 1, 1, 1)
+        Ellipse:
+            size: [self.graphical_size[0]*0.2, self.graphical_size[1]*0.2]
+            pos: [self.graphical_pos[0] + self.graphical_size[0]*0.2, self.graphical_pos[1] + self.graphical_size[1]*0.6]
+        
+        Ellipse:
+            size: [self.graphical_size[0]*0.2, self.graphical_size[1]*0.2]
+            pos: [self.graphical_pos[0] + self.graphical_size[0]*0.6, self.graphical_pos[1] + self.graphical_size[1]*0.6]
+        
+        Color:
+            rgba: (0, 0, 0, 1)
+        Ellipse:
+            size: [self.graphical_size[0]*0.1, self.graphical_size[1]*0.1]
+            pos: [self.graphical_pos[0] + self.graphical_size[0]*0.25, self.graphical_pos[1] + self.graphical_size[1]*0.65]
+        
+        Ellipse:
+            size: [self.graphical_size[0]*0.1, self.graphical_size[1]*0.1]
+            pos: [self.graphical_pos[0] + self.graphical_size[0]*0.65, self.graphical_pos[1] + self.graphical_size[1]*0.65]
+
+<Fruit>:
+    canvas:
+        Color:
+            rgba: (1, 1, 1, 1)
+        Rectangle:
+            texture: self.fruit_texture
+            size: self.graphical_size
+            pos: self.graphical_pos
