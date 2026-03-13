@@ -1,16 +1,47 @@
 <PongBall>:
-    size: 50, 50 
+    size: 40, 40
     canvas:
+        Color:
+            rgba: 0, 0, 0, 0.3
+        Ellipse:
+            pos: self.x + 5, self.y - 8
+            size: self.width, self.height * 0.6
+        Color:
+            rgba: 1, 1, 1, 1
         Ellipse:
             pos: self.pos
-            size: self.size          
+            size: self.size
+        Color:
+            rgba: 1, 1, 1, 0.9
+        Ellipse:
+            pos: self.x + 8, self.y + 25
+            size: 10, 10
+        Color:
+            rgba: 1, 1, 1, 0.6
+        Ellipse:
+            pos: self.x + 15, self.y + 20
+            size: 6, 6
 
 <PongPaddle>:
-    size: 25, 200
+    size: 25, 180
     canvas:
+        Color:
+            rgba: 0, 0, 0, 0.4
         Rectangle:
+            pos: self.x + 5, self.y - 5
+            size: self.size
+        Color:
+            rgba: 1, 0, 0, 1
+        RoundedRectangle:
             pos: self.pos
             size: self.size
+            radius: [12]
+        Color:
+            rgba: 1, 1, 1, 0.3
+        RoundedRectangle:
+            pos: self.x + 3, self.y + self.height * 0.7
+            size: self.width - 6, self.height * 0.15
+            radius: [6]
 
 <PongGame>:
     ball: pong_ball
@@ -18,21 +49,49 @@
     player2: player_right
     
     canvas:
+        Color:
+            rgba: 0, 0.5, 0.9, 1
         Rectangle:
-            pos: self.center_x - 5, 0
-            size: 10, self.height
+            pos: self.pos
+            size: self.size
+        Color:
+            rgba: 1, 1, 1, 1
+        Rectangle:
+            pos: self.center_x - 2, 0
+            size: 4, self.height
+        Color:
+            rgba: 1, 1, 1, 1
+        Rectangle:
+            pos: 0, self.top - 2
+            size: self.width, 4
+        Rectangle:
+            pos: 0, self.y
+            size: self.width, 4
     
     Label:
         font_size: 70  
         center_x: root.width / 4
         top: root.top - 50
         text: str(root.player1.score)
+        color: 1, 1, 1, 1
+        bold: True
         
     Label:
         font_size: 70  
         center_x: root.width * 3 / 4
         top: root.top - 50
         text: str(root.player2.score)
+        color: 1, 1, 1, 1
+        bold: True
+    
+    # Статус игры
+    Label:
+        font_size: 20
+        center_x: root.center_x
+        y: 10
+        text: root.status_text
+        color: 1, 1, 1, 0.8
+        bold: True
     
     PongBall:
         id: pong_ball
@@ -40,10 +99,10 @@
         
     PongPaddle:
         id: player_left
-        x: root.x
+        x: root.x + 10
         center_y: root.center_y
         
     PongPaddle:
         id: player_right
-        x: root.width - self.width
+        x: root.width - self.width - 10
         center_y: root.center_y
