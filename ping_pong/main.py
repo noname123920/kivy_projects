@@ -35,12 +35,12 @@ class PongGame(Widget):
     player2 = ObjectProperty(None)
     
     is_bot_mode = BooleanProperty(True)
-    game_state = StringProperty("waiting")  # waiting, playing, game_over
+    game_state = StringProperty("waiting")  # waiting, playing, paused, game_over
     serving_player = NumericProperty(1)
     points_to_win = NumericProperty(11)
     rallies_since_serve = NumericProperty(0)
     
-    status_text = StringProperty("👋 Нажмите ПРОБЕЛ для начала игры | B - бот")
+    status_text = StringProperty("👋 Нажмите ПРОБЕЛ для начала игры | B - бот | P - пауза")
     
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -54,21 +54,38 @@ class PongGame(Widget):
     def _on_keyboard_down(self, window, key, scancode, codepoint, modifier):
         print(f"Key pressed: {key}, codepoint: {codepoint}")  # Для отладки
         
-        # Код 32 - это пробел
-        if key == 32 or key == 273:  # 32 = пробел, 273 = Enter
+        # Пробел (32) - начало игры
+        if key == 32:
             if self.game_state == "waiting" or self.game_state == "game_over":
                 self.start_game()
             return True
         
-        # Клавиша B (код 98 - маленькая b, 66 - большая B)
+        # Клавиша P (112) - пауза
+        elif key == 112:  # p
+            self.toggle_pause()
+            return True
+        
+        # Клавиша B (98) - переключение режима бота (только когда игра не активна)
         elif key == 98 or key == 66:
-            self.toggle_bot_mode()
+            if self.game_state != "playing" and self.game_state != "paused":
+                self.toggle_bot_mode()
             return True
         
         return False
     
     def _on_keyboard_up(self, window, key, scancode):
         pass
+    
+    def toggle_pause(self):
+        if self.game_state == "playing":
+            self.game_state = "paused"
+            self.status_text = "⏸ ПАУЗА (P - продолжить, ESC не работает, только P)"
+        elif self.game_state == "paused":
+            self.game_state = "playing"
+            if self.is_bot_mode:
+                self.status_text = f"🤖 Режим бота: {'ВКЛ' if self.is_bot_mode else 'ВЫКЛ'}"
+            else:
+                self.status_text = "👥 Режим: Игра вдвоем"
     
     def toggle_bot_mode(self):
         self.is_bot_mode = not self.is_bot_mode
