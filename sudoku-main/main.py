@@ -6,6 +6,7 @@ from kivy.uix.relativelayout import RelativeLayout
 from kivy.uix.gridlayout import GridLayout
 from kivy.core.window import Window
 from kivy.clock import Clock
+from kivy.utils import get_color_from_hex
 
 import random
 import copy
@@ -53,20 +54,42 @@ class SudokuButton(Button):
     locked = False
     number = ""
     
+    # Цвета для разных цифр
+    number_colors = {
+        "1": get_color_from_hex("#E74C3C"),  # Красный
+        "2": get_color_from_hex("#E67E22"),  # Оранжевый
+        "3": get_color_from_hex("#F1C40F"),  # Желтый
+        "4": get_color_from_hex("#2ECC71"),  # Зеленый
+        "5": get_color_from_hex("#1ABC9C"),  # Бирюзовый
+        "6": get_color_from_hex("#3498DB"),  # Синий
+        "7": get_color_from_hex("#9B59B6"),  # Фиолетовый
+        "8": get_color_from_hex("#E91E63"),  # Розовый
+        "9": get_color_from_hex("#00BCD4"),  # Голубой
+    }
+    
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         
         self.background_normal = ""
-        self.background_color = (0.2, 0.2, 0.2)
+        self.background_color = (0.95, 0.95, 0.95, 1)  # Светлый фон по умолчанию
+        self.color = (0.2, 0.2, 0.2, 1)  # Темный текст
     
-        
+    def update_color_by_number(self):
+        """Обновляет цвет текста в зависимости от цифры"""
+        if self.text and self.text != "" and self.text in self.number_colors:
+            self.color = self.number_colors[self.text]
+        else:
+            self.color = (0.2, 0.2, 0.2, 1)
+    
     def on_press(self):
         super().on_press()
         
         if not self.locked:
             self.text = self.last_key
+            self.update_color_by_number()
         if not self.locked and self.last_key == "spacebar":
-            self.text = self.number    
+            self.text = self.number
+            self.update_color_by_number()    
         
         
 class Sudoku(BoxLayout):
@@ -106,19 +129,19 @@ class Sudoku(BoxLayout):
         self.title = Label(text = "KivySudoku",
                            font_size = self.height * 0.5,
                            font_name = "label_font.ttf",
-                           color = (0, 0.25, 0.3, 1),
+                           color = get_color_from_hex("#2C3E50"),
                            bold = True,
                            size_hint = (1, 0.1))
         
         self.timer = Label(font_size = self.height * 0.2,
                            font_name = "label_font.ttf",
-                           color = (0, 0.25, 0.3, 1),
+                           color = get_color_from_hex("#2C3E50"),
                            bold = True,
                            size_hint = (1, 0.05))
         
         self.number = Label(font_size = self.height * 0.2,
                            font_name = "label_font.ttf",
-                           color = (0, 0.25, 0.3, 1),
+                           color = get_color_from_hex("#2C3E50"),
                            bold = True,
                            size_hint = (1, 0.05))
         
@@ -199,9 +222,10 @@ class Sudoku(BoxLayout):
                 button = list2.pop(0)
                 self.grid.grids[grid].buttons[button].text = str(board[i][j])
                 self.grid.grids[grid].buttons[button].number = str(self.original_board[i][j])
+                self.grid.grids[grid].buttons[button].update_color_by_number()
                 if self.grid.grids[grid].buttons[button].text != "":
                     self.grid.grids[grid].buttons[button].locked = True
-                    self.grid.grids[grid].buttons[button].background_color = (0.15, 0.15, 0.15, 1)           
+                    self.grid.grids[grid].buttons[button].background_color = (0.85, 0.85, 0.9, 1)   # Светло-серый для фиксированных цифры        
 
 
     def solve_board(self, board):
@@ -271,15 +295,15 @@ class Sudoku(BoxLayout):
             button = i%9
             if self.last_key == "":
                 if not self.grid.grids[grid].buttons[button].locked:
-                    self.grid.grids[grid].buttons[button].background_color = (0.2, 0.2, 0.2)
+                    self.grid.grids[grid].buttons[button].background_color = (0.95, 0.95, 0.95, 1)
                 else:
-                    self.grid.grids[grid].buttons[button].background_color = (0.15, 0.15, 0.15, 1)
+                    self.grid.grids[grid].buttons[button].background_color = (0.85, 0.85, 0.9, 1)
             elif self.grid.grids[grid].buttons[button].text == self.last_key:
-                self.grid.grids[grid].buttons[button].background_color = (0, 0.15, 0.2, 1)
+                self.grid.grids[grid].buttons[button].background_color = get_color_from_hex("#FFE082")  # Желтая подсветка
             elif not self.grid.grids[grid].buttons[button].locked:
-                self.grid.grids[grid].buttons[button].background_color = (0.2, 0.2, 0.2)
+                self.grid.grids[grid].buttons[button].background_color = (0.95, 0.95, 0.95, 1)
             else:
-                self.grid.grids[grid].buttons[button].background_color = (0.15, 0.15, 0.15, 1)                
+                self.grid.grids[grid].buttons[button].background_color = (0.85, 0.85, 0.9, 1)                
 
 
     def is_over(self):
